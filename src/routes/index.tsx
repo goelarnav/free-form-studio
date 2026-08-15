@@ -1,10 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
 import { PageShell } from "@/components/site/page-shell";
+import { HeroStack, ImageBand, HorizontalProjects } from "@/components/site/motion-sections";
+import { useReveal } from "@/hooks/use-reveal";
 import { projects } from "@/lib/projects";
 import hero from "@/assets/hero.jpg";
 import materials from "@/assets/materials.jpg";
 import project1 from "@/assets/project-1.jpg";
+import project2 from "@/assets/project-2.jpg";
+import project3 from "@/assets/project-3.jpg";
+import project4 from "@/assets/project-4.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -26,131 +30,105 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  const [activeSlug, setActiveSlug] = useState(projects[0]!.slug);
-  const active = projects.find((p) => p.slug === activeSlug) ?? projects[0]!;
+  const statement = useReveal<HTMLElement>();
+  const spread = useReveal<HTMLElement>();
+  const material = useReveal<HTMLElement>();
 
   return (
     <PageShell>
-      {/* Hero — full bleed, text floating off-grid */}
-      <section className="relative h-[92vh] min-h-[560px] w-full overflow-hidden">
-        <img
-          src={hero}
-          alt="Warm minimal Miami living room designed by Luxury Decora"
-          width={1600}
-          height={1104}
-          className="veil-in h-full w-full object-cover"
-        />
-        <div className="absolute inset-0 bg-ink/5" />
-        <div className="absolute bottom-10 left-6 right-6 md:bottom-16 md:left-10 md:right-10">
-          <div className="grid items-end gap-8 md:grid-cols-12">
-            <h1 className="fade-up font-display text-[13vw] leading-[0.86] tracking-tight text-ivory md:col-span-8 md:text-[7.5vw]">
-              Interiors
-              <br />
-              <em className="italic">for the way</em>
-              <br />
-              you live
-            </h1>
-            <p className="fade-up max-w-xs text-sm font-light leading-relaxed text-ivory/90 md:col-span-3 md:col-start-10">
-              A Miami practice shaping warm, restrained spaces — considered from the first plan
-              study to the last placed object.
-            </p>
-          </div>
-        </div>
-      </section>
+      <HeroStack
+        slides={[
+          { src: hero, alt: "Warm minimal Miami living room", label: "Bayfront Residence" },
+          { src: project2, alt: "Kitchen in pale oak and limestone", label: "Coral Way House" },
+          { src: project3, alt: "Principal bedroom in linen tones", label: "North Bay" },
+        ]}
+      />
 
-      {/* Statement — asymmetric */}
-      <section className="px-6 py-28 md:px-10 md:py-44">
-        <div className="grid gap-14 md:grid-cols-12">
-          <p className="eyebrow md:col-span-2">(Practice)</p>
-          <p className="font-display text-2xl leading-[1.35] text-ink md:col-span-7 md:col-start-4 md:text-4xl">
+      {/* Statement — off-grid, revealed on scroll */}
+      <section ref={statement} className="px-6 py-24 md:px-10 md:py-40">
+        <div className="grid gap-10 md:grid-cols-12">
+          <p className="eyebrow reveal md:col-span-2" data-reveal>
+            (Practice)
+          </p>
+          <p
+            className="reveal font-display text-2xl leading-[1.3] text-ink md:col-span-8 md:col-start-4 md:text-[3.2vw]"
+            data-reveal
+            data-reveal-delay="120"
+          >
             We design interiors that hold their composure — clarity of form, disciplined
             detailing, and a warmth that only reveals itself slowly, in daylight and in use.
           </p>
         </div>
+      </section>
 
-        <div className="mt-24 grid gap-14 md:mt-40 md:grid-cols-12 md:items-end">
-          <figure className="md:col-span-5 md:col-start-2">
+      <ImageBand
+        images={[
+          { src: project1, caption: "Threshold study — North Bay" },
+          { src: materials, caption: "Limestone, oak, linen" },
+          { src: project4, caption: "Brickell Loft — Lounge" },
+          { src: project3, caption: "Principal bedroom" },
+          { src: project2, caption: "Coral Way — Kitchen" },
+        ]}
+      />
+
+      <HorizontalProjects items={projects} />
+
+      {/* Editorial spread — staggered horizontal offsets */}
+      <section ref={spread} className="relative overflow-hidden px-6 py-28 md:px-10 md:py-40">
+        <div className="grid gap-y-16 md:grid-cols-12 md:items-center">
+          <figure
+            className="reveal-clip md:col-span-5 md:col-start-1 md:-ml-10"
+            data-reveal
+          >
             <img
               src={project1}
               alt="Plaster arch and warm hallway"
-              width={912}
-              height={1200}
               loading="lazy"
-              className="w-full object-cover"
+              className="h-[60vh] w-full object-cover"
             />
-            <figcaption className="eyebrow mt-4">North Bay — Threshold study</figcaption>
+            <figcaption className="eyebrow mt-4">01 — Threshold</figcaption>
           </figure>
-          <div className="md:col-span-4 md:col-start-9">
-            <p className="text-sm font-light leading-loose text-stone">
-              Placeholder text. Each project is approached as a design inquiry: spatial
-              performance, material integrity and long-term adaptability considered alongside
-              visual coherence.
+
+          <div className="reveal md:col-span-4 md:col-start-8" data-reveal data-reveal-delay="180">
+            <p className="font-display text-3xl leading-tight text-ink md:text-5xl">
+              Each room is drawn <em className="italic">twice</em> — once in plan, once in light.
+            </p>
+            <p className="mt-8 text-sm font-light leading-loose text-stone">
+              Placeholder text. Spatial performance, material integrity and long-term
+              adaptability are considered alongside visual coherence.
             </p>
             <Link to="/about" className="eyebrow link-underline mt-10 inline-block text-ink">
               About the studio
             </Link>
           </div>
-        </div>
-      </section>
 
-      {/* Selected work — hovering index with preview */}
-      <section className="bg-sand px-6 py-24 md:px-10 md:py-36">
-        <div className="flex items-baseline justify-between">
-          <p className="eyebrow">Selected work</p>
-          <Link to="/projects" className="eyebrow link-underline text-ink">
-            All projects
-          </Link>
-        </div>
-
-        <div className="mt-12 grid gap-12 md:grid-cols-12">
-          <ul className="md:col-span-7">
-            {projects.map((p) => (
-              <li key={p.slug} onMouseEnter={() => setActiveSlug(p.slug)}>
-                <Link
-                  to="/projects/$slug"
-                  params={{ slug: p.slug }}
-                  className="group flex items-baseline gap-6 border-b border-ink/10 py-6 transition-opacity md:py-8"
-                >
-                  <span className="eyebrow w-8 shrink-0">{p.index}</span>
-                  <span
-                    className={`font-display text-3xl leading-none transition-all duration-500 md:text-6xl ${
-                      active.slug === p.slug ? "text-ink md:translate-x-3" : "text-ink/45"
-                    }`}
-                  >
-                    {p.title}
-                  </span>
-                  <span className="eyebrow ml-auto hidden md:block">{p.category}</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-
-          <figure className="md:col-span-4 md:col-start-9 md:sticky md:top-32 md:self-start">
+          <figure
+            className="reveal-clip md:col-span-4 md:col-start-4 md:-mt-24"
+            data-reveal
+            data-reveal-delay="240"
+          >
             <img
-              key={active.slug}
-              src={active.cover}
-              alt={active.title}
+              src={project4}
+              alt="Lounge with layered textiles"
               loading="lazy"
-              className="fade-up aspect-[3/4] w-full object-cover"
+              className="h-[42vh] w-full object-cover"
             />
-            <figcaption className="eyebrow mt-4">
-              {active.location} — {active.year}
-            </figcaption>
+            <figcaption className="eyebrow mt-4">02 — Lounge</figcaption>
           </figure>
         </div>
       </section>
 
       {/* Material band */}
-      <section className="grid md:grid-cols-2">
-        <img
-          src={materials}
-          alt="Limestone, oak, linen and brass material samples"
-          width={1200}
-          height={912}
-          loading="lazy"
-          className="h-full w-full object-cover"
-        />
-        <div className="flex flex-col justify-center gap-8 px-6 py-24 md:px-16">
+      <section ref={material} className="grid md:grid-cols-2">
+        <div className="reveal-clip overflow-hidden" data-reveal>
+          <img
+            src={materials}
+            alt="Limestone, oak, linen and brass material samples"
+            loading="lazy"
+            className="h-full min-h-[50vh] w-full object-cover"
+          />
+        </div>
+        <div className="reveal flex flex-col justify-center gap-8 px-6 py-24 md:px-16" data-reveal data-reveal-delay="150">
           <p className="eyebrow">Material</p>
           <p className="font-display text-3xl leading-tight text-ink md:text-5xl">
             Chosen for how it <em className="italic">ages</em>, not how it photographs.
