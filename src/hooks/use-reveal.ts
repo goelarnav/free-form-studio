@@ -13,7 +13,7 @@ export function useReveal<T extends HTMLElement = HTMLDivElement>(): RefObject<T
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             const t = entry.target as HTMLElement;
-            const delay = Number(t.dataset.revealDelay ?? 0);
+            const delay = Number(t.dataset['revealDelay'] ?? 0);
             window.setTimeout(() => t.classList.add("is-in"), delay);
             io.unobserve(t);
           }
