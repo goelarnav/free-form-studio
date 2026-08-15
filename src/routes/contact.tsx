@@ -32,8 +32,8 @@ function Contact() {
         }
       />
 
-      <section className="grid md:grid-cols-12">
-        <div className="px-6 pb-24 md:col-span-6 md:px-10">
+      <section className="grid gap-12 px-6 md:grid-cols-12 md:px-10">
+        <div className="pb-24 md:col-span-6">
           <dl className="border-t border-ink/10">
             {[
               ["Studio", "601 Gate Ln\nMiami, FL 33137"],
@@ -65,7 +65,7 @@ function Contact() {
           </Link>
         </div>
 
-        <figure className="md:col-span-5 md:col-start-8">
+        <figure className="md:col-span-5 md:col-start-8 md:pb-24">
           <img
             src={project3}
             alt="Quiet bedroom interior in warm ivory tones"
@@ -74,7 +74,7 @@ function Contact() {
             loading="lazy"
             className="w-full object-cover"
           />
-          <figcaption className="eyebrow mt-4 px-6 md:px-0">Studio archive — Miami</figcaption>
+          <figcaption className="eyebrow mt-4">Studio archive — Miami</figcaption>
         </figure>
       </section>
     </PageShell>

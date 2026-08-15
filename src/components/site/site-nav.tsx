@@ -26,11 +26,7 @@ export function SiteNav() {
       <header className="fixed inset-x-0 top-0 z-50 mix-blend-normal">
         <div className="flex items-start justify-between px-6 py-6 md:px-10 md:py-8">
           <Link to="/" className="block" aria-label="Luxury Decora home">
-            <img
-              src={logo.url}
-              alt="Luxury Decora"
-              className="h-10 w-auto mix-blend-multiply contrast-[2.2] brightness-[0.78] md:h-14"
-            />
+            <img src={logo.url} alt="Luxury Decora" className="h-6 w-auto md:h-8" />
           </Link>
 
           <button
