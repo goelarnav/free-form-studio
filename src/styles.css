@@ -5,6 +5,86 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
+ * LUXURY DECORA — design system
+ * Palette: warm beige / ivory / off-white with muted taupe accents.
+ * Type: Cormorant Garamond (editorial display serif) + Jost (micro sans).
+ */
+
+@theme {
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-sans: "Jost", system-ui, sans-serif;
+  --color-sand: var(--sand);
+  --color-ivory: var(--ivory);
+  --color-linen: var(--linen);
+  --color-clay: var(--clay);
+  --color-stone: var(--stone);
+  --color-ink: var(--ink);
+}
+
+@utility eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.625rem;
+  font-weight: 400;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--stone);
+}
+
+@utility rule-line {
+  height: 1px;
+  width: 100%;
+  background-color: color-mix(in oklab, var(--ink) 14%, transparent);
+}
+
+@utility link-underline {
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -0.25em;
+    height: 1px;
+    width: 100%;
+    background-color: currentColor;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  &:hover::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+}
+
+@utility fade-up {
+  animation: fade-up 1.1s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(1.25rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes veil {
+  from {
+    transform: scale(1.08);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@utility veil-in {
+  animation: veil 2.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/*
  * Design system definition.
  *
  * The @theme inline block maps CSS custom properties to Tailwind utility
@@ -62,26 +142,34 @@
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.129 0.042 264.695);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.129 0.042 264.695);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: oklch(0.208 0.042 265.755);
-  --primary-foreground: oklch(0.984 0.003 247.858);
-  --secondary: oklch(0.968 0.007 247.896);
-  --secondary-foreground: oklch(0.208 0.042 265.755);
-  --muted: oklch(0.968 0.007 247.896);
-  --muted-foreground: oklch(0.554 0.046 257.417);
-  --accent: oklch(0.968 0.007 247.896);
-  --accent-foreground: oklch(0.208 0.042 265.755);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(0.929 0.013 255.508);
-  --input: oklch(0.929 0.013 255.508);
-  --ring: oklch(0.704 0.04 256.788);
+  --radius: 0rem;
+
+  --sand: oklch(0.855 0.018 79);
+  --ivory: oklch(0.962 0.011 88);
+  --linen: oklch(0.928 0.014 84);
+  --clay: oklch(0.72 0.024 67);
+  --stone: oklch(0.575 0.021 66);
+  --ink: oklch(0.315 0.014 62);
+
+  --background: var(--ivory);
+  --foreground: var(--ink);
+  --card: var(--linen);
+  --card-foreground: var(--ink);
+  --popover: var(--ivory);
+  --popover-foreground: var(--ink);
+  --primary: var(--ink);
+  --primary-foreground: var(--ivory);
+  --secondary: var(--linen);
+  --secondary-foreground: var(--ink);
+  --muted: var(--linen);
+  --muted-foreground: var(--stone);
+  --accent: var(--sand);
+  --accent-foreground: var(--ink);
+  --destructive: oklch(0.55 0.13 30);
+  --destructive-foreground: var(--ivory);
+  --border: oklch(0.855 0.014 79);
+  --input: oklch(0.855 0.014 79);
+  --ring: var(--clay);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -140,5 +228,20 @@
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
+    font-family: var(--font-sans);
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background-color: var(--sand);
+    color: var(--ink);
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 300;
   }
 }
