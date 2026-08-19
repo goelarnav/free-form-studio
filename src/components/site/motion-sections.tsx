@@ -2,20 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import type { Project } from "@/lib/projects";
 
-/* ---------- Hero: slow crossfading stack with drifting frames ---------- */
-export function HeroStack({
-  slides,
-}: {
-  slides: { src: string; alt: string; label: string }[];
-}) {
-  const [i, setI] = useState(0);
+/* ---------- Hero: single image, slow drift zoom + scroll parallax ---------- */
+export function Hero({ src, alt, label }: { src: string; alt: string; label: string }) {
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const [offset, setOffset] = useState(0);
-
-  useEffect(() => {
-    const id = window.setInterval(() => setI((n) => (n + 1) % slides.length), 5200);
-    return () => window.clearInterval(id);
-  }, [slides.length]);
 
   useEffect(() => {
     let raf = 0;
@@ -30,18 +20,9 @@ export function HeroStack({
   }, []);
 
   return (
-    <section ref={wrapRef} className="relative h-[92vh] min-h-[520px] w-full overflow-hidden">
+    <section ref={wrapRef} className="relative h-screen min-h-[520px] w-full overflow-hidden">
       <div className="absolute inset-0" style={{ transform: `translate3d(0, ${offset}px, 0)` }}>
-        {slides.map((s, n) => (
-          <img
-            key={s.src}
-            src={s.src}
-            alt={s.alt}
-            className={`drift absolute inset-0 h-full w-full object-cover transition-opacity duration-[2000ms] ease-[cubic-bezier(0.22,1,0.36,1)] ${
-              n === i ? "opacity-100" : "opacity-0"
-            }`}
-          />
-        ))}
+        <img src={src} alt={alt} className="drift absolute inset-0 h-full w-full object-cover" />
       </div>
       <div className="absolute inset-0 bg-ink/10" />
 
@@ -56,21 +37,74 @@ export function HeroStack({
         </h1>
         <div className="mt-8 flex flex-wrap items-end justify-between gap-6">
           <p className="fade-up max-w-xs text-sm font-light leading-relaxed text-ivory/85">
-            A Miami practice shaping warm, restrained spaces — from the first plan study to the
-            last placed object.
+            A Miami practice shaping warm, restrained spaces — from the first plan study to the last
+            placed object.
           </p>
-          <div className="flex items-center gap-3">
+          <span className="eyebrow text-ivory/80">{label}</span>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- Hero picker: cycles every candidate main image with an index
+   label + clickable dots, purely to help choose the final hero photo.
+   Swap back to <Hero src=... /> once one is picked. ---------- */
+export function HeroPicker({ slides }: { slides: { src: string; alt: string }[] }) {
+  const [i, setI] = useState(0);
+
+  useEffect(() => {
+    const id = window.setInterval(() => setI((n) => (n + 1) % slides.length), 4000);
+    return () => window.clearInterval(id);
+  }, [slides.length]);
+
+  return (
+    <section className="relative h-screen min-h-[520px] w-full overflow-hidden">
+      {slides.map((s, n) => (
+        <img
+          key={s.src}
+          src={s.src}
+          alt={s.alt}
+          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-1000 ${
+            n === i ? "opacity-100" : "opacity-0"
+          }`}
+        />
+      ))}
+      <div className="absolute inset-0 bg-ink/10" />
+
+      <div className="absolute left-6 top-24 md:left-10 md:top-28">
+        <span className="inline-block bg-ink/70 px-4 py-2 font-sans text-sm font-semibold tracking-widest text-ivory backdrop-blur-sm">
+          Option {i + 1} / {slides.length}
+        </span>
+      </div>
+
+      {/* vertical studio line, Sandra-Britt style — same as the real Hero */}
+      <span className="eyebrow absolute left-6 top-1/2 hidden -translate-y-1/2 rotate-180 text-ivory/80 md:block [writing-mode:vertical-rl]">
+        Luxury Decora — Miami, Florida
+      </span>
+
+      <div className="absolute inset-x-6 bottom-10 md:inset-x-16 md:bottom-14">
+        <h1 className="font-display text-[3.75vw] leading-[0.82] tracking-tight text-ivory md:text-[2.25vw]">
+          Interiors <em className="italic">for the</em> way you live
+        </h1>
+        <div className="mt-8 flex flex-wrap items-end justify-between gap-6">
+          <p className="max-w-xs text-sm font-light leading-relaxed text-ivory/85">
+            A Miami practice shaping warm, restrained spaces — from the first plan study to the last
+            placed object.
+          </p>
+          <div className="flex flex-wrap items-center gap-3">
             {slides.map((s, n) => (
               <button
-                key={s.label}
+                key={s.src}
+                type="button"
+                onMouseDown={(e) => e.preventDefault()}
                 onClick={() => setI(n)}
-                aria-label={s.label}
-                className={`h-px w-10 transition-all duration-700 ${
-                  n === i ? "bg-ivory" : "bg-ivory/35"
+                aria-label={`Show option ${n + 1}`}
+                className={`h-2 shrink-0 rounded-full transition-all duration-300 ${
+                  n === i ? "w-6 bg-ivory" : "w-2 bg-ivory/40"
                 }`}
               />
             ))}
-            <span className="eyebrow ml-4 text-ivory/80">{slides[i]!.label}</span>
           </div>
         </div>
       </div>
@@ -78,142 +112,119 @@ export function HeroStack({
   );
 }
 
-/* ---------- Endless horizontal image band ---------- */
-export function ImageBand({ images }: { images: { src: string; caption: string }[] }) {
-  const row = [...images, ...images];
-  return (
-    <section className="overflow-hidden border-y border-ink/10 bg-linen py-10">
-      <div className="marquee-track gap-6 pr-6">
-        {row.map((im, n) => (
-          <figure key={`${im.src}-${n}`} className="w-[52vw] shrink-0 md:w-[26vw]">
-            <img
-              src={im.src}
-              alt={im.caption}
-              loading="lazy"
-              className="h-[34vh] w-full object-cover md:h-[42vh]"
-            />
-            <figcaption className="eyebrow mt-3">{im.caption}</figcaption>
-          </figure>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-/* ---------- Pinned horizontal project scroller ---------- */
+/* ---------- Horizontal project rail — scrolls sideways only on deliberate
+   horizontal input (trackpad swipe, shift+wheel, drag), never hijacks the
+   page's normal vertical scroll. ---------- */
 export function HorizontalProjects({ items }: { items: Project[] }) {
-  const sectionRef = useRef<HTMLDivElement | null>(null);
   const trackRef = useRef<HTMLDivElement | null>(null);
-  const [x, setX] = useState(0);
-  const [progress, setProgress] = useState(0);
+  const barRef = useRef<HTMLSpanElement | null>(null);
 
+  /* Progress bar follows the track's own scroll position. */
   useEffect(() => {
-    let raf = 0;
-    const compute = () => {
-      const section = sectionRef.current;
-      const track = trackRef.current;
-      if (!section || !track) return;
-      const distance = Math.max(track.scrollWidth - window.innerWidth, 0);
-      const total = section.offsetHeight - window.innerHeight;
-      const scrolled = Math.min(Math.max(-section.getBoundingClientRect().top, 0), total);
-      const p = total > 0 ? scrolled / total : 0;
-      setProgress(p);
-      setX(-p * distance);
+    const track = trackRef.current;
+    if (!track) return;
+    const update = () => {
+      const max = track.scrollWidth - track.clientWidth;
+      const p = max > 0 ? track.scrollLeft / max : 0;
+      if (barRef.current) barRef.current.style.width = `${p * 100}%`;
     };
-    const onScroll = () => {
-      raf = window.requestAnimationFrame(compute);
-    };
-    compute();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", compute);
+    update();
+    track.addEventListener("scroll", update, { passive: true });
+    const ro = new ResizeObserver(update);
+    ro.observe(track);
     return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", compute);
-      window.cancelAnimationFrame(raf);
+      track.removeEventListener("scroll", update);
+      ro.disconnect();
+    };
+  }, [items.length]);
+
+  /* Click-and-drag scrolling for mouse users (trackpads already scroll
+     the container natively on a horizontal swipe or shift+wheel). */
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    let dragging = false;
+    let startX = 0;
+    let startScroll = 0;
+
+    const onDown = (e: PointerEvent) => {
+      dragging = true;
+      startX = e.clientX;
+      startScroll = track.scrollLeft;
+      track.setPointerCapture(e.pointerId);
+    };
+    const onMove = (e: PointerEvent) => {
+      if (!dragging) return;
+      track.scrollLeft = startScroll - (e.clientX - startX);
+    };
+    const onUp = () => {
+      dragging = false;
+    };
+
+    track.addEventListener("pointerdown", onDown);
+    track.addEventListener("pointermove", onMove);
+    track.addEventListener("pointerup", onUp);
+    track.addEventListener("pointercancel", onUp);
+    return () => {
+      track.removeEventListener("pointerdown", onDown);
+      track.removeEventListener("pointermove", onMove);
+      track.removeEventListener("pointerup", onUp);
+      track.removeEventListener("pointercancel", onUp);
     };
   }, []);
 
   return (
-    <>
-      {/* desktop: pinned horizontal travel */}
-      <section ref={sectionRef} className="relative hidden h-[380vh] bg-sand md:block">
-        <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden">
-          <div className="flex items-baseline justify-between px-10">
-            <p className="eyebrow">Selected work</p>
-            <Link to="/projects" className="eyebrow link-underline text-ink">
-              All projects
-            </Link>
-          </div>
+    <section className="bg-sand py-20 md:py-28">
+      <div className="flex items-baseline justify-between px-6 md:px-10">
+        <p className="eyebrow">Selected work</p>
+        <Link to="/projects" className="eyebrow link-underline text-ink">
+          All projects
+        </Link>
+      </div>
 
-          <div
-            ref={trackRef}
-            className="mt-10 flex w-max items-end gap-[6vw] px-10 will-change-transform"
-            style={{ transform: `translate3d(${x}px, 0, 0)`, transition: "transform 120ms linear" }}
+      <div
+        ref={trackRef}
+        className="no-scrollbar mt-10 flex cursor-grab items-end gap-[10vw] overflow-x-auto px-6 pb-2 [overscroll-behavior-inline:contain] active:cursor-grabbing md:gap-[6vw] md:px-10"
+      >
+        {items.map((p, n) => (
+          <Link
+            key={p.slug}
+            to="/projects/$slug"
+            params={{ slug: p.slug }}
+            className={`group block shrink-0 select-none ${
+              n % 2 === 0 ? "w-[72vw] md:w-[34vw]" : "w-[62vw] md:w-[26vw]"
+            }`}
           >
-            {items.map((p, n) => (
-              <Link
-                key={p.slug}
-                to="/projects/$slug"
-                params={{ slug: p.slug }}
-                className="group block shrink-0"
-                style={{ width: n % 2 === 0 ? "34vw" : "26vw" }}
-              >
-                <div className={n % 2 === 0 ? "" : "mb-[10vh]"}>
-                  <div className="overflow-hidden">
-                    <img
-                      src={p.cover}
-                      alt={p.title}
-                      loading="lazy"
-                      className="h-[52vh] w-full object-cover transition-transform duration-[1400ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.06]"
-                    />
-                  </div>
-                  <div className="mt-4 flex items-baseline justify-between gap-4">
-                    <span className="font-display text-3xl leading-none text-ink">{p.title}</span>
-                    <span className="eyebrow">{p.index}</span>
-                  </div>
-                  <p className="eyebrow mt-2">
-                    {p.location} — {p.year}
-                  </p>
-                </div>
-              </Link>
-            ))}
-            <div className="w-[10vw] shrink-0" />
-          </div>
-
-          <div className="mt-12 px-10">
-            <div className="rule-line relative">
-              <span
-                className="absolute left-0 top-0 h-px bg-ink transition-[width] duration-150"
-                style={{ width: `${Math.round(progress * 100)}%` }}
-              />
+            <div className={n % 2 === 0 ? "" : "mb-[6vh] md:mb-[10vh]"}>
+              <div className="overflow-hidden">
+                <img
+                  src={p.cover}
+                  alt={p.title}
+                  loading="lazy"
+                  draggable={false}
+                  className="h-[46vh] w-full object-cover transition-transform duration-[1400ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.06] md:h-[52vh]"
+                />
+              </div>
+              <div className="mt-4 flex items-baseline justify-between gap-4">
+                <span className="font-display text-2xl leading-none text-ink md:text-3xl">
+                  {p.title}
+                </span>
+                <span className="eyebrow">{p.index}</span>
+              </div>
+              <p className="eyebrow mt-2">
+                {p.location} — {p.year}
+              </p>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* mobile: swipeable rail */}
-      <section className="bg-sand py-20 md:hidden">
-        <div className="flex items-baseline justify-between px-6">
-          <p className="eyebrow">Selected work</p>
-          <Link to="/projects" className="eyebrow link-underline text-ink">
-            All
           </Link>
+        ))}
+        <div className="w-[10vw] shrink-0" />
+      </div>
+
+      <div className="mt-8 px-6 md:px-10">
+        <div className="rule-line relative">
+          <span ref={barRef} className="absolute left-0 top-0 h-px w-0 bg-ink" />
         </div>
-        <div className="no-scrollbar mt-8 flex snap-x snap-mandatory gap-5 overflow-x-auto px-6">
-          {items.map((p) => (
-            <Link
-              key={p.slug}
-              to="/projects/$slug"
-              params={{ slug: p.slug }}
-              className="w-[74vw] shrink-0 snap-start"
-            >
-              <img src={p.cover} alt={p.title} loading="lazy" className="h-[54vh] w-full object-cover" />
-              <span className="mt-3 block font-display text-2xl text-ink">{p.title}</span>
-              <span className="eyebrow">{p.location}</span>
-            </Link>
-          ))}
-        </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 }

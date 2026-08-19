@@ -23,12 +23,20 @@ export function PageOpener({
 }) {
   return (
     <section className="px-6 pb-16 pt-36 md:px-10 md:pb-24 md:pt-52">
-      <p className="eyebrow fade-up">{eyebrow}</p>
-      <h1 className="fade-up mt-8 max-w-4xl font-display text-5xl leading-[1.02] tracking-tight text-ink md:text-8xl">
+      <p className="eyebrow fade-up" style={{ animationDelay: "0ms" }}>
+        {eyebrow}
+      </p>
+      <h1
+        className="fade-up mt-8 max-w-4xl font-display text-5xl leading-[1.02] tracking-tight text-ink md:text-8xl"
+        style={{ animationDelay: "180ms" }}
+      >
         {title}
       </h1>
       {lede ? (
-        <p className="fade-up mt-10 max-w-xl text-sm font-light leading-relaxed text-stone md:ml-auto md:text-base">
+        <p
+          className="fade-up mt-10 max-w-xl text-sm font-light leading-relaxed text-stone md:ml-auto md:text-base"
+          style={{ animationDelay: "420ms" }}
+        >
           {lede}
         </p>
       ) : null}

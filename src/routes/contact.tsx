@@ -60,9 +60,31 @@ function Contact() {
             ))}
           </dl>
 
-          <Link to="/start-a-project" className="eyebrow link-underline mt-12 inline-block text-ink">
-            Or begin an enquiry
-          </Link>
+          {/* Prominent CTA — bordered like a proposal card, but no fill, so it stays part of the page rather than sitting on top of it */}
+          <div className="mt-12 border border-ink/15 p-8 md:p-10">
+            <p className="eyebrow">(Or)</p>
+            <p className="mt-5 font-display text-2xl leading-tight text-ink md:text-3xl">
+              Prefer to start with a project brief?
+            </p>
+            <p className="mt-4 text-sm font-light leading-loose text-stone">
+              Tell us about your space, scope and timeline — no call required. We reply to every
+              enquiry personally, usually within two working days.
+            </p>
+            <Link
+              to="/start-a-project"
+              className="group mt-8 inline-flex items-center gap-5 border border-ink px-10 py-5 transition-colors hover:bg-ink"
+            >
+              <span className="eyebrow text-ink transition-colors group-hover:text-ivory">
+                Begin an enquiry
+              </span>
+              <span
+                aria-hidden="true"
+                className="text-ink transition-all group-hover:translate-x-1 group-hover:text-ivory"
+              >
+                →
+              </span>
+            </Link>
+          </div>
         </div>
 
         <figure className="md:col-span-5 md:col-start-8 md:pb-24">
